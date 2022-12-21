@@ -18,7 +18,7 @@
     "@types/aws-lambda": "^8.10.109",
     "@types/jsonwebtoken": "^8.5.9",
     "@types/node": "^10.17.60",
-    "aws-sdk": "^2.1277.0",
+    "aws-sdk": "^2.1278.0",
     "serverless-aws-documentation": "^1.1.0",
     "serverless-dynamodb-local": "^0.2.40",
     "serverless-iam-roles-per-function": "^3.2.0",

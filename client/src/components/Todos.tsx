@@ -47,10 +47,6 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
   onTodoCreate = async (event: React.ChangeEvent<HTMLButtonElement>) => {
     try {
       const dueDate = this.calculateDueDate()
-      console.log('test', {
-        todos: [...this.state.todos, this.props.auth.getIdToken()],
-        newTodoName: ''
-      })
       const newTodo = await createTodo(this.props.auth.getIdToken(), {
         name: this.state.newTodoName,
         dueDate

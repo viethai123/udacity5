@@ -22,12 +22,13 @@ export async function createTodo(
   createTodoRequest: CreateTodoRequest
 ): Promise<TodoItem> {
   const todoId = uuid.v4()
+  const s3BucketName = process.env.ATTACHMENT_S3_BUCKET
   const newItem: TodoItem = {
     userId,
     todoId,
     createdAt: new Date().toISOString(),
     done: false,
-    attachmentUrl: null,
+    attachmentUrl:  `https://${s3BucketName}.s3.amazonaws.com/${todoId}`, 
     ...createTodoRequest
   }
   console.log('todoId', todoId)

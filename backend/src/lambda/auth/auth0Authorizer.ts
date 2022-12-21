@@ -101,8 +101,7 @@ const getSigningKey = async (jwksUrlm, kid) => {
     })
   const signingKey = signingKeys.find((key) => key.kid === kid)
   if (!signingKey) {
-    throw new Error('Invalid signing keys')
-    logger.error('No signing keys found')
+    throw new Error('Invalid signing key')
   }
 
   logger.info('Signing keys created successfully ', signingKey)

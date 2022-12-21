@@ -10,18 +10,15 @@ export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     const todoId = event.pathParameters.todoId
     const userId = getUserId(event)
-    const attachmentId = uuid.v4()
-    const uploadUrl = await generateAttachmentUrl(attachmentId)
-    await updateAttachmentUrl(userId, todoId, attachmentId)
+    
+    const generateAttachmentId = uuid.v4()
+
+    const url = await generateAttachmentUrl(generateAttachmentId)
+    await updateAttachmentUrl(userId, todoId, generateAttachmentId)
     return {
       statusCode: 200,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Credentials': true,
-       'Content-type' : 'application/json',
-      },
       body: JSON.stringify({
-        uploadUrl
+        url
       })
     }
   }
