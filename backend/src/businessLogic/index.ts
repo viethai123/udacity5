@@ -1,5 +1,5 @@
-import { TodosAccess } from './todosAcess'
-import { AttachmentUtils } from './attachmentUtils'
+import { TodosAccess } from '../dataLayer/todosAcess'
+import { AttachmentUtils } from '../helpers/attachmentUtils'
 import { TodoItem } from '../models/TodoItem'
 import { CreateTodoRequest } from '../requests/CreateTodoRequest'
 import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
@@ -13,7 +13,6 @@ const todosAccess = new TodosAccess()
 const attachmentUtil = new AttachmentUtils()
 
 export async function getTodos(userId: string) {
-  logger.info(`Retrieving all todos for user ${userId}`, { userId })
   return await todosAccess.getAllTodos(userId)
 }
 
@@ -31,8 +30,6 @@ export async function createTodo(
     attachmentUrl:  `https://${s3BucketName}.s3.amazonaws.com/${todoId}`, 
     ...createTodoRequest
   }
-  console.log('todoId', todoId)
-  console.log('newItem', newItem)
   await todosAccess.createTodo(newItem)
   return newItem
 }

@@ -4,11 +4,10 @@ import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import { createLogger } from '../utils/logger'
 import { TodoItem } from '../models/TodoItem';
 import { TodoUpdate } from '../models/TodoUpdate';
+import { Types } from 'aws-sdk/clients/s3';
 
 const AWSXRay = require('aws-xray-sdk')
 const XAWS = AWSXRay.captureAWS(AWS)
-
-
 
 const logger = createLogger('TodosAccess')
 
@@ -16,7 +15,9 @@ const logger = createLogger('TodosAccess')
 export class TodosAccess {
     constructor(
         private readonly docClient:DocumentClient = createDynamoDBClient(),
-        private readonly todosTable = process.env.TODOS_TABLE
+        private readonly todosTable = process.env.TODOS_TABLE,
+        private readonly s3Client: Types = new AWS.S3({signatureVersion: 'v4'}),
+        private readonly s3BucketName = process.env.S3_BUCKET_NAME
     ){}
 
     async getTodoItem(userId: string, todoId: string): Promise<TodoItem>{

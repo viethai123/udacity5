@@ -60,7 +60,6 @@ functions:
     iamRoleStatements:
       - Effect: Allow
         Action:
-          - dynamodb:Scan
           - dynamodb:Query
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
       - Effect: Allow
@@ -114,14 +113,11 @@ functions:
             Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
           - Effect: Allow
             Action:
-                - dynamodb:PutItem
                 - dynamodb:UpdateItem
-                - dynamodb:Scan
             Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}/index/${self:provider.environment.INDEX_NAME}
           - Effect: Allow
             Action:
               - "xray:PutTraceSegments"
-              - "xray:PutTelemetryRecords"
             Resource:
               - "*"  
   # TODO: Configure this function
@@ -149,8 +145,6 @@ functions:
       - Effect: Allow
         Action:
           - dynamodb:DeleteItem
-          - dynamodb:Query
-          - dynamodb:Scan
         Resource: 
           - '*'
 
@@ -170,22 +164,9 @@ functions:
         Resource: "arn:aws:s3:::${self:provider.environment.ATTACHMENT_S3_BUCKET}/*"
       - Effect: Allow
         Action:
-          - dynamodb:GetItem
-          - dynamodb:PutItem
-          - dynamodb:UpdateItem
+          - s3:*
+          - xray:PutTraceSegments
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
-      - Effect: Allow
-        Action:
-          - "xray:PutTraceSegments"
-          - "xray:PutTelemetryRecords"
-        Resource:
-          - "*"
-      - Effect: "Allow"
-        Action:
-          - dynamodb:Query
-          - dynamodb:Scan
-        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}/index/${self:provider.environment.INDEX_NAME}
-
 
 resources:
   Resources:
