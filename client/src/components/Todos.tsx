@@ -80,7 +80,8 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
   }
 
   handleNextClick = () => {
-    if (this.state.currentPage === this.state.pageNumbers) return
+    debugger
+    if (this.state.currentPage === this.state.pageNumbers.length) return
     this.setState(prevPage => {
       return {currentPage: prevPage.currentPage + 1}
     })
