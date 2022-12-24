@@ -17,6 +17,7 @@ import {
 import { createTodo, deleteTodo, getTodos, patchTodo } from '../api/todos-api'
 import Auth from '../auth/Auth'
 import { Todo } from '../types/Todo'
+import '../Pagination.css'
 
 interface TodosProps {
   auth: Auth
@@ -27,17 +28,62 @@ interface TodosState {
   todos: Todo[]
   newTodoName: string
   loadingTodos: boolean
+  currentPage: number
+  todosPerPage: number
+  currentTodos: any
+  pageNumbers: any
 }
 
 export class Todos extends React.PureComponent<TodosProps, TodosState> {
   state: TodosState = {
     todos: [],
     newTodoName: '',
-    loadingTodos: true
+    loadingTodos: true,
+    currentPage: 1,
+    todosPerPage: 3,
+    currentTodos: [],
+    pageNumbers: []
   }
 
   handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({ newTodoName: event.target.value })
+  }
+
+  handleClick = (number: any) => {
+    // this.setState({
+    //   currentPage: Number(event.target.id)
+    // });
+
+    const currentPage = Number(number)
+
+
+    const { todos, todosPerPage } = this.state;
+    // Logic for displaying todos
+    const indexOfLastTodo = currentPage * todosPerPage;
+    const indexOfFirstTodo = indexOfLastTodo - todosPerPage;
+    const currentTodos = todos.slice(indexOfFirstTodo, indexOfLastTodo);
+    console.log('currentTodos', currentTodos)
+    // Logic for displaying page numbers 
+    const pageNumbers = [];
+    for (let i = 1; i <= Math.ceil(this.state.todos.length / this.state.todosPerPage); i++) {
+      pageNumbers.push(i);
+    }
+
+    this.setState({pageNumbers, currentTodos, currentPage})
+  }
+
+  handlePrevClick = () => {
+    if (this.state.currentPage === 1) return
+    this.setState(prevPage => {
+      return {currentPage: prevPage.currentPage - 1}
+    })
+  }
+
+  handleNextClick = () => {
+    if (this.state.currentPage === this.state.pageNumbers) return
+    this.setState(prevPage => {
+      return {currentPage: prevPage.currentPage + 1}
+    })
   }
 
   onEditButtonClick = (todoId: string) => {
@@ -97,6 +143,21 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
         todos,
         loadingTodos: false
       })
+  
+      const { todos: listTodos, todosPerPage } = this.state;
+      // Logic for displaying todos
+      const indexOfLastTodo = 1 * todosPerPage;
+      const indexOfFirstTodo = indexOfLastTodo - todosPerPage;
+      const currentTodos = listTodos.slice(indexOfFirstTodo, indexOfLastTodo);
+      console.log('currentTodos', currentTodos)
+      // Logic for displaying page numbers 
+      const pageNumbers = [];
+      for (let i = 1; i <= Math.ceil(this.state.todos.length / this.state.todosPerPage); i++) {
+        pageNumbers.push(i);
+      }
+
+      this.setState({pageNumbers, currentTodos})
+
     } catch (e:any) {
       alert(`Failed to fetch todos: ${e.message}`)
     }
@@ -105,11 +166,29 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
   render() {
     return (
       <div>
-        <Header as="h1">TODOs</Header>
+        <Header as="h1">My todos list</Header>
 
         {this.renderCreateTodoInput()}
-
-        {this.renderTodos()}
+        {this.renderTodos(this.state.currentTodos)}
+        {/* {this.renderTodos()} */}
+        <div className="pagination">
+          <div onClick={() => this.handlePrevClick()}>&laquo;</div>
+          {this.state.pageNumbers.map((number: any) => {
+            return (
+              <>
+                {/* <li
+                  key={number}
+                  id={number as any}
+                  onClick={this.handleClick}
+                >
+                  {number}
+                </li> */}
+                <div className={Number(this.state.currentPage) === Number(number) ? 'active' : ''} onClick={() => this.handleClick(number)}>{number}</div>
+              </>
+            );
+          })}
+          <div onClick={() => this.handleNextClick()}>&raquo;</div>
+        </div>
       </div>
     )
   }
@@ -139,12 +218,12 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
     )
   }
 
-  renderTodos() {
+  renderTodos(listItem: any) {
     if (this.state.loadingTodos) {
       return this.renderLoading()
     }
 
-    return this.renderTodosList()
+    return this.renderTodosList(listItem)
   }
 
   renderLoading() {
@@ -157,10 +236,10 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
     )
   }
 
-  renderTodosList() {
+  renderTodosList(listItem: any) {
     return (
       <Grid padded>
-        {this.state.todos.map((todo, pos) => {
+        {listItem.map((todo: any, pos: any) => {
           return (
             <Grid.Row key={todo.todoId}>
               <Grid.Column width={1} verticalAlign="middle">
